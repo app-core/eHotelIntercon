@@ -1294,5 +1294,6 @@ public class PmsContent {
 		PmsContent p = new PmsContent();
 //		System.out.println(p.getMainMenu("1", "2001"));
 		System.out.println(p.getOultetImage("1", "M", "2001"));
+		System.out.println("Test Github");
 	}
 }
