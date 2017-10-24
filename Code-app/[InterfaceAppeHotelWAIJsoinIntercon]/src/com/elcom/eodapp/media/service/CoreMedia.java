@@ -573,19 +573,25 @@ public class CoreMedia extends HttpServlet {
 			out.println(xml);
 			return;
 		} else if (lenh == Command.com_getListAirport) {
+			keystb = request.getParameter(Param.keystb);
 			System.out.println("lenh: " + lenh + " - keystb: " + keystb);
 
-			String json = pmsdao.getListAirport();
+			String json = pmsdao.getListAirport(keystb);
 			System.out.println(json);
 			out.println(json);
 			return;
-		}
-		
-		else if (lenh == Command.com_getFlightSchedule) {
+		} else if (lenh == Command.com_getFlightSchedule) {
 			String location = request.getParameter(Param.location);
 			System.out.println("lenh: " + lenh + " - keystb: " + keystb);
 
 			String json = pmsdao.getFlightSchedule(location);
+			System.out.println(json);
+			out.println(json);
+			return;
+		} else if (lenh == Command.com_getClock) {
+			System.out.println("lenh: " + lenh);
+
+			String json = pmsdao.getClock();
 			System.out.println(json);
 			out.println(json);
 			return;

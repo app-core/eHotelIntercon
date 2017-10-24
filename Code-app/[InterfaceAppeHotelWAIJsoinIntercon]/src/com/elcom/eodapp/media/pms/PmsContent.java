@@ -1363,11 +1363,14 @@ public class PmsContent {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public String getListAirport() throws IOException {
+	public String getListAirport(String keystb) throws IOException {
 		String jsonText = "";
 		JSONObject obj = new JSONObject();
 		JSONArray ja = new JSONArray();
 		Vector params = new Vector();
+		SubProParam param = null;
+		param = new SubProParam(keystb, SubProParam.IN);
+		params.add(param);
 		Vector<String> outParam = new Vector<String>();
 		SubProParam out_data = new SubProParam(outParam, "STRING_ARR",
 				SubProParam.OUT);
@@ -1376,17 +1379,18 @@ public class PmsContent {
 		try {
 			params = broker.executeSubPro(SQL.sqlgetAirport, params);
 			if ((params != null) & (params.size() > 0)) {
-				out_data = (SubProParam) params.get(0);
+				out_data = (SubProParam) params.get(1);
 				outParam = out_data.getVector();
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		for (int i = 0; i < outParam.size(); i += 3) {
+		for (int i = 0; i < outParam.size(); i += 4) {
 			obj = new JSONObject();
 			obj.put("id", outParam.get(i));
 			obj.put("name", outParam.get(i + 1));
 			obj.put("code", outParam.get(i + 2));
+			obj.put("image", outParam.get(i + 3));
 			ja.add(obj);
 		}
 		StringWriter out = new StringWriter();
@@ -1439,12 +1443,46 @@ public class PmsContent {
 		return jsonText;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public String getClock() throws IOException {
+		String jsonText = "";
+		JSONObject obj = new JSONObject();
+		JSONArray ja = new JSONArray();
+		Vector params = new Vector();
+		Vector<String> outParam = new Vector<String>();
+		SubProParam out_data = new SubProParam(outParam, "STRING_ARR",
+				SubProParam.OUT);
+		params.add(out_data);
+
+		try {
+			params = broker.executeSubPro(SQL.sqlgetClock, params);
+			if ((params != null) & (params.size() > 0)) {
+				out_data = (SubProParam) params.get(0);
+				outParam = out_data.getVector();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		for (int i = 0; i < outParam.size(); i += 5) {
+			obj = new JSONObject();
+			obj.put("id", outParam.get(i));
+			obj.put("city", outParam.get(i + 1));
+			obj.put("national", outParam.get(i + 2));
+			obj.put("timezone", outParam.get(i + 3));
+			obj.put("image", outParam.get(i + 4));
+			ja.add(obj);
+		}
+		StringWriter out = new StringWriter();
+		ja.writeJSONString(out);
+		jsonText = out.toString();
+		return jsonText;
+	}
+
 	public static void main(String[] args) throws IOException {
 		PmsContent p = new PmsContent();
 		// System.out.println(p.getMainMenu("1", "2001"));
 		// System.out.println(p.getOultetImage("1", "M", "2001"));
 		System.out.println("Test Github");
-		System.out.println(p.getListAirport());
-		
+		System.out.println(p.getFlightSchedule("4"));
 	}
 }
