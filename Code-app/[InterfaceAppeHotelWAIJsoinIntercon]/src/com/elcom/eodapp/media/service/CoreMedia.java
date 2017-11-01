@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -24,6 +25,7 @@ import com.elcom.eodapp.media.record.RecordContent;
 import com.elcom.eodapp.media.util.DAOFactory;
 import com.elcom.eodapp.media.util.DateHelper;
 import com.elcom.eodapp.media.vod.VodContentDAO2;
+import com.google.gson.Gson;
 
 public class CoreMedia extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -573,27 +575,38 @@ public class CoreMedia extends HttpServlet {
 			out.println(xml);
 			return;
 		} else if (lenh == Command.com_getListAirport) {
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
 			keystb = request.getParameter(Param.keystb);
 			System.out.println("lenh: " + lenh + " - keystb: " + keystb);
 
-			String json = pmsdao.getListAirport(keystb);
-			System.out.println(json);
-			out.println(json);
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("airport", pmsdao.getListAirport(keystb));
+			map.put("airline", pmsdao.getAirline());
+			map.put("station", pmsdao.getStation());
+			response.getWriter().write(new Gson().toJson(map));
 			return;
 		} else if (lenh == Command.com_getFlightSchedule) {
 			String location = request.getParameter(Param.location);
 			System.out.println("lenh: " + lenh + " - keystb: " + keystb);
-
-			String json = pmsdao.getFlightSchedule(location);
-			System.out.println(json);
-			out.println(json);
+			response.getWriter().write(
+					new Gson().toJson(pmsdao.getFlightSchedule(location)));
 			return;
 		} else if (lenh == Command.com_getClock) {
 			System.out.println("lenh: " + lenh);
-
-			String json = pmsdao.getClock();
-			System.out.println(json);
-			out.println(json);
+			response.getWriter().write(new Gson().toJson(pmsdao.getClock()));
+			return;
+		} else if (lenh == Command.com_getFilterFlight) {
+			String location = request.getParameter(Param.location);
+			String station = request.getParameter(Param.station);
+			String date = request.getParameter(Param.date);
+			String route = request.getParameter(Param.route);
+			String airline = request.getParameter(Param.airline);
+			String flighttype = request.getParameter(Param.flighttype);
+			System.out.println("lenh: " + lenh + " - keystb: " + keystb);
+			response.getWriter().write(
+					new Gson().toJson(pmsdao.filterFlight(location, station,
+							date, route, airline, flighttype)));
 			return;
 		}
 

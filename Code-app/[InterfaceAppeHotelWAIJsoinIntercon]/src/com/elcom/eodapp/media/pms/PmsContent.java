@@ -19,6 +19,7 @@ import com.elcom.eodapp.media.common.eActivities;
 import com.elcom.eodapp.media.common.eAttractions;
 import com.elcom.eodapp.media.common.eBill;
 import com.elcom.eodapp.media.common.eCountries;
+import com.elcom.eodapp.media.common.eCurrency;
 import com.elcom.eodapp.media.common.eGuest;
 import com.elcom.eodapp.media.common.eIconMenu;
 import com.elcom.eodapp.media.common.eImage;
@@ -28,15 +29,16 @@ import com.elcom.eodapp.media.common.eMessage;
 import com.elcom.eodapp.media.common.ePromotion;
 import com.elcom.eodapp.media.common.eService;
 import com.elcom.eodapp.media.common.eServiceSub;
-import com.elcom.eodapp.media.common.eCurrency;
 import com.elcom.eodapp.media.common.eWether;
-import com.elcom.eodapp.media.common.CMNShopbill;
 import com.elcom.eodapp.media.util.DateHelper;
 
 public class PmsContent {
 	private static IMBroker broker = IMBroker.getInstance();
+	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger(PmsContent.class);
+	@SuppressWarnings("unused")
 	private static final String pattern = "MM/dd/yyyy HH:mm:ss";
+	@SuppressWarnings("unused")
 	private static Configuration config = null;
 
 	static {
@@ -796,6 +798,7 @@ public class PmsContent {
 	}
 
 	// --------------------------------------------------------------------------------
+	@SuppressWarnings({ "unused", "unchecked", "rawtypes" })
 	public String orderRoomService(eItemOrder item, String smartcard) {
 		System.out.println("--------Processing orderRoomService[smartcard="
 				+ smartcard + "]");
@@ -838,6 +841,7 @@ public class PmsContent {
 		return error;
 	}
 
+	@SuppressWarnings({ "unused", "unchecked" })
 	public String getExchangeRates(int fromRow, int noRows) {
 		String xml = "";
 		Vector<String> outParam = new Vector<String>();
@@ -895,6 +899,7 @@ public class PmsContent {
 		return xml;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public String getCountries(String level) {
 		String xml = "";
 		Vector params = new Vector(2);
@@ -940,6 +945,7 @@ public class PmsContent {
 	}
 
 	// ----------------------------------------------------------------------
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public String getWeatherToday(String day) {
 		String xml = "";
 		Vector params = new Vector(2);
@@ -987,6 +993,7 @@ public class PmsContent {
 	}
 
 	// ----------------------------------------------------------------------
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public String getWeatherInWeek(String countruid, String sn) {
 		String xml = "";
 		Vector params = new Vector(3);
@@ -1363,8 +1370,7 @@ public class PmsContent {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public String getListAirport(String keystb) throws IOException {
-		String jsonText = "";
+	public JSONArray getListAirport(String keystb) throws IOException {
 		JSONObject obj = new JSONObject();
 		JSONArray ja = new JSONArray();
 		Vector params = new Vector();
@@ -1393,15 +1399,11 @@ public class PmsContent {
 			obj.put("image", outParam.get(i + 3));
 			ja.add(obj);
 		}
-		StringWriter out = new StringWriter();
-		ja.writeJSONString(out);
-		jsonText = out.toString();
-		return jsonText;
+		return ja;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public String getFlightSchedule(String location) throws IOException {
-		String jsonText = "";
+	public JSONArray getFlightSchedule(String location) throws IOException {
 		JSONObject obj = new JSONObject();
 		JSONArray ja = new JSONArray();
 		Vector params = new Vector();
@@ -1437,15 +1439,11 @@ public class PmsContent {
 			obj.put("logo", outParam.get(i + 10));
 			ja.add(obj);
 		}
-		StringWriter out = new StringWriter();
-		ja.writeJSONString(out);
-		jsonText = out.toString();
-		return jsonText;
+		return ja;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public String getClock() throws IOException {
-		String jsonText = "";
+	public JSONArray getClock() throws IOException {
 		JSONObject obj = new JSONObject();
 		JSONArray ja = new JSONArray();
 		Vector params = new Vector();
@@ -1472,10 +1470,112 @@ public class PmsContent {
 			obj.put("image", outParam.get(i + 4));
 			ja.add(obj);
 		}
-		StringWriter out = new StringWriter();
-		ja.writeJSONString(out);
-		jsonText = out.toString();
-		return jsonText;
+		return ja;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public JSONArray getAirline() throws IOException {
+		JSONObject obj = new JSONObject();
+		JSONArray ja = new JSONArray();
+		Vector params = new Vector();
+		Vector<String> outParam = new Vector<String>();
+		SubProParam out_data = new SubProParam(outParam, "STRING_ARR",
+				SubProParam.OUT);
+		params.add(out_data);
+
+		try {
+			params = broker.executeSubPro(SQL.sqlgetAirline, params);
+			if ((params != null) & (params.size() > 0)) {
+				out_data = (SubProParam) params.get(0);
+				outParam = out_data.getVector();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		for (int i = 0; i < outParam.size(); i++) {
+			obj = new JSONObject();
+			obj.put("airline", outParam.get(i));
+			ja.add(obj);
+		}
+		return ja;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public JSONArray getStation() throws IOException {
+		JSONObject obj = new JSONObject();
+		JSONArray ja = new JSONArray();
+		Vector params = new Vector();
+		Vector<String> outParam = new Vector<String>();
+		SubProParam out_data = new SubProParam(outParam, "STRING_ARR",
+				SubProParam.OUT);
+		params.add(out_data);
+
+		try {
+			params = broker.executeSubPro(SQL.sqlgetStation, params);
+			if ((params != null) & (params.size() > 0)) {
+				out_data = (SubProParam) params.get(0);
+				outParam = out_data.getVector();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		for (int i = 0; i < outParam.size(); i++) {
+			obj = new JSONObject();
+			obj.put("station", outParam.get(i));
+			ja.add(obj);
+		}
+		return ja;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public JSONArray filterFlight(String location, String station, String date, String route, String airline, String flighttype) throws IOException {
+		JSONObject obj = new JSONObject();
+		JSONArray ja = new JSONArray();
+		Vector params = new Vector();
+		SubProParam param = null;
+		param = new SubProParam(location, SubProParam.IN);
+		params.add(param);
+		param = new SubProParam(station, SubProParam.IN);
+		params.add(param);
+		param = new SubProParam(date, SubProParam.IN);
+		params.add(param);
+		param = new SubProParam(route, SubProParam.IN);
+		params.add(param);
+		param = new SubProParam(airline, SubProParam.IN);
+		params.add(param);
+		param = new SubProParam(flighttype, SubProParam.IN);
+		params.add(param);
+		
+		Vector<String> outParam = new Vector<String>();
+		SubProParam out_data = new SubProParam(outParam, "STRING_ARR",
+				SubProParam.OUT);
+		params.add(out_data);
+
+		try {
+			params = broker.executeSubPro(SQL.sqlfilterFlight, params);
+			if ((params != null) & (params.size() > 0)) {
+				out_data = (SubProParam) params.get(6);
+				outParam = out_data.getVector();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		for (int i = 0; i < outParam.size(); i += 11) {
+			obj = new JSONObject();
+			obj.put("id", outParam.get(i));
+			obj.put("code", outParam.get(i + 1));
+			obj.put("localtion_arrival", outParam.get(i + 2));
+			obj.put("localtion_departure", outParam.get(i + 3));
+			obj.put("time_arrival", outParam.get(i + 4));
+			obj.put("time_departure", outParam.get(i + 5));
+			obj.put("airline", outParam.get(i + 6));
+			obj.put("plane_tupe", outParam.get(i + 7));
+			obj.put("flight_type", outParam.get(i + 8));
+			obj.put("status", outParam.get(i + 9));
+			obj.put("logo", outParam.get(i + 10));
+			ja.add(obj);
+		}
+		return ja;
 	}
 
 	public static void main(String[] args) throws IOException {

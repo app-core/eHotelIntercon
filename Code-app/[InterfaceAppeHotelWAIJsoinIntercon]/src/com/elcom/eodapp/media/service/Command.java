@@ -68,5 +68,6 @@ public interface Command {
 	public static int com_getListAirport = 121;
 	public static int com_getFlightSchedule = 122;
 	public static int com_getClock = 123;
+	public static int com_getFilterFlight = 124;
 	
 }
